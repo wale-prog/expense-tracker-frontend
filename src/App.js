@@ -36,20 +36,51 @@ const initialExpenses = [
 ]
 
 const App = () =>{
+ 
 
   const [expenses, setExpenses] = useState(initialExpenses);
+  const [manageStatus, setmanageInStatus] = useState({
+    loggedInStatus: "NOT_LOGGED_IN",
+    user: {}
+   });
 
   const addExpenseHandler = (expense) => {
     setExpenses(prevExpenses => ([expense, ...prevExpenses])
     );
   };
 
+  const handleSuccessfulAuth = (data) => {
+    setmanageInStatus({
+      loggedInStatus: "LOGGED_IN",
+      user: data.user
+    });
+  };
+
   return (
     <div>
       <BrowserRouter>
         <Routes>
-          <Route exact path='registrations' element={<Registration />}/>
-          <Route exact path='/' element={<ExpensePage onAddExpense={addExpenseHandler} items={expenses} />} />                
+          <Route exact path='registrations' element={<Registration handleSuccessfulAuth={handleSuccessfulAuth} />}/>
+          <Route
+          exact
+          path='/'
+          element={
+            <ExpensePage
+               onAddExpense={addExpenseHandler}
+               items={expenses}
+               loggedInStatus={manageStatus.loggedInStatus}
+              />} 
+            />
+            <Route
+          exact
+          path='/expense'
+          element={
+            <ExpensePage
+               onAddExpense={addExpenseHandler}
+               items={expenses}
+               loggedInStatus={manageStatus.loggedInStatus}
+              />} 
+            />               
         </Routes>
       </BrowserRouter>
     </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import './ExpensesFilter.css';
 
@@ -15,6 +15,11 @@ const ExpensesFilter = (props) => {
     {value: '2020', text: '2020'},
     {value: '2019', text: '2019'},
   ]
+
+  const [category, setCategory] = useState('')
+  const handleCatSelect = (e) => {
+    setCategory(e.target.value)
+  }
 
 
   return (
@@ -37,7 +42,7 @@ const ExpensesFilter = (props) => {
         </div>
         <div className='expense-filter__category'>
           <label>Filter by Category</label>
-          <select value="">
+          <select value={category} onChange={handleCatSelect}>
             <option className='category-filter' disabled={true} value="">Category</option>
             <option value="Car">Car</option>
             <option value="Home">Home</option>

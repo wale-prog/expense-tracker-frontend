@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Registration = () => {
+const Registration = (props) => {
+
+  const nav = useNavigate();
 
   const [loginDetail, setLoginDetail] = useState({
     email: "",
@@ -18,18 +21,21 @@ const Registration = () => {
       {
         user: {
           email,
-          password,
+          password, 
           password_confirmation
         },
       }, 
         { withCredentials: true }
     )
       .then(response => {
-       console.log("registration resp", response)
+        if (response.data.status === 'created') {
+          props.handleSuccessfulAuth(response.data);         
+          nav("/expense");
+        }
       })
       .catch(error => {
-        console.log("registration error", error);
-      })
+        setLoginDetail({ ...loginDetail, registrationErrors: error })
+      }) 
     e.preventDefault();
   }
 

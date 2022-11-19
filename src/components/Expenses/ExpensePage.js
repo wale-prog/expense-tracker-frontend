@@ -5,6 +5,7 @@ const ExpensePage = (props) => (
   <>
     <NewExpense onAddExpense={props.onAddExpense} />
     <Expenses items={props.items}/>
+    <h2>Status: {props.loggedInStatus}</h2>
   </>
 );
 export default ExpensePage;
