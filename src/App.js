@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import Expenses from "./components/Expenses/Expenses";
-import NewExpense from './components/NewExpense/NewExpense';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import ExpensePage from './components/Expenses/ExpensePage';
+import Registration from './components/Auth/Registration';
 
 const initialExpenses = [
   {
@@ -45,8 +46,12 @@ const App = () =>{
 
   return (
     <div>
-      <NewExpense onAddExpense={addExpenseHandler} />
-      <Expenses items={expenses} />
+      <BrowserRouter>
+        <Routes>
+          <Route exact path='registrations' element={<Registration />}/>
+          <Route exact path='/' element={<ExpensePage onAddExpense={addExpenseHandler} items={expenses} />} />                
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
