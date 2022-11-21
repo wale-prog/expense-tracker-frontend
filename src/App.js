@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import axios from 'axios';
 import ExpensePage from './components/Expenses/ExpensePage';
 import Registration from './components/Auth/Registration';
+import Login from './components/Auth/Login';
 
 const initialExpenses = [
   {
@@ -36,11 +38,35 @@ const initialExpenses = [
 ]
 
 const App = () =>{
+
+  const checkLoginStatus = () => {
+    axios.get("http://localhost:3000/logged_in", { withCredentials: true })
+    .then(response => {
+        if (response.data.logged_in) {
+          setmanageInStatus({
+          loggedInStatus: "LOGGED_IN",
+          user: response.data.user
+      })
+    } else if (!response.data.logged_in) {
+      setmanageInStatus({
+        loggedInStatus: "NOT_LOGGED_IN",
+        user: {}
+      })
+    }
+  })
+    .catch(error => {
+      console.log("Check login error", error);
+    });
+  }
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, [])
  
 
   const [expenses, setExpenses] = useState(initialExpenses);
   const [manageStatus, setmanageInStatus] = useState({
-    loggedInStatus: "NOT_LOGGED_IN",
+    loggedInStatus: "",
     user: {}
    });
 
@@ -61,17 +87,19 @@ const App = () =>{
       <BrowserRouter>
         <Routes>
           <Route exact path='registrations' element={<Registration handleSuccessfulAuth={handleSuccessfulAuth} />}/>
+          <Route exact path='login' element={<Login  handleSuccessfulAuth={handleSuccessfulAuth} />}/>
           <Route
-          exact
-          path='/'
-          element={
-            <ExpensePage
-               onAddExpense={addExpenseHandler}
-               items={expenses}
-               loggedInStatus={manageStatus.loggedInStatus}
-              />} 
-            />
-            <Route
+            exact
+            path='/'
+            element={
+              <ExpensePage
+                 onAddExpense={addExpenseHandler}
+                 items={expenses}
+                 loggedInStatus={manageStatus.loggedInStatus}
+              />
+            } 
+          />
+          <Route
           exact
           path='/expense'
           element={
