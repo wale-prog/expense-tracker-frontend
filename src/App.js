@@ -5,39 +5,14 @@ import ExpensePage from './components/Expenses/ExpensePage';
 import Registration from './components/Auth/Registration';
 import Login from './components/Auth/Login';
 
-const initialExpenses = [
-  {
-    id: "e1",
-    title: "Toilet Paper",
-    amount: 94.12,
-    date: new Date(2020, 7, 14),
-  },
-  { id: "e2", 
-    title: "New TV",
-    amount: 799.49, 
-    date: new Date(2021, 2, 12)
-  },
-  {
-    id: "e3",
-    title: "Car Insurance",
-    amount: 294.67,
-    date: new Date(2021, 2, 28),
-  },
-  {
-    id: "e4",
-    title: "New Desk (Wooden)",
-    amount: 450,
-    date: new Date(2021, 5, 12),
-  },
-  {
-    id: "e5",
-    title: "New Computer",
-    amount: 700,
-    date: new Date(2022, 4, 25 )
-  }
-]
-
 const App = () =>{
+
+  const [expenses, setExpenses] = useState([]);
+
+  const [manageStatus, setmanageInStatus] = useState({
+    loggedInStatus: "",
+    user: {}
+  });
 
   const checkLoginStatus = () => {
     axios.get("http://localhost:3000/logged_in", { withCredentials: true })
@@ -46,14 +21,14 @@ const App = () =>{
           setmanageInStatus({
           loggedInStatus: "LOGGED_IN",
           user: response.data.user
+          })
+        } else if (!response.data.logged_in) {
+          setmanageInStatus({
+          loggedInStatus: "NOT_LOGGED_IN",
+          user: {}
+          })
+        }
       })
-    } else if (!response.data.logged_in) {
-      setmanageInStatus({
-        loggedInStatus: "NOT_LOGGED_IN",
-        user: {}
-      })
-    }
-  })
     .catch(error => {
       console.log("Check login error", error);
     });
@@ -62,13 +37,6 @@ const App = () =>{
   useEffect(() => {
     checkLoginStatus();
   }, [])
- 
-
-  const [expenses, setExpenses] = useState(initialExpenses);
-  const [manageStatus, setmanageInStatus] = useState({
-    loggedInStatus: "",
-    user: {}
-   });
 
   const addExpenseHandler = (expense) => {
     setExpenses(prevExpenses => ([expense, ...prevExpenses])
@@ -82,8 +50,15 @@ const App = () =>{
     });
   };
 
+  const updateLoggedInStatus = (data) => {
+    setmanageInStatus({
+      loggedInStatus: data.loggedInStatus,
+      user: data.user
+    })
+  }
+
   return (
-    <div>
+    <div>      
       <BrowserRouter>
         <Routes>
           <Route exact path='registrations' element={<Registration handleSuccessfulAuth={handleSuccessfulAuth} />}/>
@@ -96,6 +71,7 @@ const App = () =>{
                  onAddExpense={addExpenseHandler}
                  items={expenses}
                  loggedInStatus={manageStatus.loggedInStatus}
+                 updateLoggedInStatus={updateLoggedInStatus}
               />
             } 
           />
@@ -107,7 +83,9 @@ const App = () =>{
                onAddExpense={addExpenseHandler}
                items={expenses}
                loggedInStatus={manageStatus.loggedInStatus}
-              />} 
+               updateLoggedInStatus={updateLoggedInStatus}
+              />
+            } 
             />               
         </Routes>
       </BrowserRouter>

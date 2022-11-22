@@ -26,14 +26,14 @@ const Login = (props) => {
         { withCredentials: true }
     )
       .then(response => {
+        console.log(response.data)
         if (response.data.logged_in) {
           props.handleSuccessfulAuth(response.data);         
           nav("/expense");
         }
       })
       .catch(error => {
-        console.log("errors from login", error);
-        // setLoginDetail({ ...loginDetail, registrationErrors: error })
+        setLoginDetail({ ...loginDetail, loginErrors: error })
       }) 
     e.preventDefault();
   }
