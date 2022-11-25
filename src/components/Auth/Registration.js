@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { loginAction } from "../../redux/LoginSlice"; 
+import { useDispatch } from "react-redux";
 
-const Registration = (props) => {
-
+const Registration = () => {
+  const dispatch = useDispatch();
   const nav = useNavigate();
 
   const [loginDetail, setLoginDetail] = useState({
@@ -29,8 +31,8 @@ const Registration = (props) => {
     )
       .then(response => {
         if (response.data.status === 'created') {
-          props.handleSuccessfulAuth(response.data);         
-          nav("/expense");
+          dispatch(loginAction.login(response.data));         
+          nav("/login");
         }
       })
       .catch(error => {

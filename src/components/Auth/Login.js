@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { loginAction } from "../../redux/LoginSlice"; 
+import { useDispatch } from "react-redux";
 
-const Login = (props) => {
+const Login = () => {
 
   const nav = useNavigate();
+  const dispatch = useDispatch();
 
   const [loginDetail, setLoginDetail] = useState({
     email: "",
@@ -12,10 +15,8 @@ const Login = (props) => {
     loginErrors: ""
   })
 
-  const handleSubmit = (e) => {   
-
+  const handleSubmit = (e) => {
     const { email, password } = loginDetail;
-
     axios.post("http://localhost:3000/sessions",
       {
         user: {
@@ -28,8 +29,8 @@ const Login = (props) => {
       .then(response => {
         console.log(response.data)
         if (response.data.logged_in) {
-          props.handleSuccessfulAuth(response.data);         
-          nav("/expense");
+          dispatch(loginAction.login(response.data));        
+          nav("/");
         }
       })
       .catch(error => {
@@ -63,14 +64,6 @@ const Login = (props) => {
           onChange={handleChange}
           required
         />
-        {/* <input
-          type="password" 
-          name="password_confirmation" 
-          placeholder="Password Confirmation" 
-          value={loginDetail.password_confirmation}
-          onChange={handleChange}
-          required
-        /> */}
         <button type="submit">Login</button>
       </form>
     </div>
