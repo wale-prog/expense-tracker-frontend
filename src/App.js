@@ -6,28 +6,34 @@ import axios from 'axios';
 import ExpensePage from './components/Expenses/ExpensePage';
 import Registration from './components/Auth/Registration';
 import Login from './components/Auth/Login';
+import { categoryAction } from './redux/CategorySlice';
 
 const App = () =>{
   const [expenses, setExpenses] = useState([]);
   const dispatch = useDispatch();
 
-  const checkLoginStatus = () => {
-    axios.get("http://localhost:3000/logged_in", { withCredentials: true })
-    .then(response => {
-      console.log(response.data)
-        if (response.data.logged_in) {
-          dispatch(loginAction.login(response.data));          
-        // } else if (!response.data.logged_in) {
-         
-        }
+  const getCategories = (userId) => {
+    const apiUrl = `http://localhost:3000/api/v1/user/${userId}/category`;
+    axios.get(apiUrl, { withCredentials: true })
+      .then(response => {
+        dispatch(categoryAction.addCategory(response.data));
       })
-    .catch(error => {
-      console.log("Check login error", error);
-    });
   }
 
   useEffect(() => {
-    checkLoginStatus();
+    const checkLoginStatus = () => {
+      axios.get("http://localhost:3000/logged_in", { withCredentials: true })
+      .then(response => {
+          if (response.data.logged_in) {
+            dispatch(loginAction.login(response.data));
+            getCategories(response.data.user.id)        
+          } 
+        })
+      .catch(error => {
+        console.log("Check login error", error);
+      });
+    }
+    checkLoginStatus()
   })
 
   const addExpenseHandler = (expense) => {

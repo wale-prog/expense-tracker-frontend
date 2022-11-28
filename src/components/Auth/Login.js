@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { loginAction } from "../../redux/LoginSlice"; 
 import { useDispatch } from "react-redux";
+import { categoryAction } from "../../redux/CategorySlice";
+
 
 const Login = () => {
 
@@ -14,6 +16,15 @@ const Login = () => {
     password: "",
     loginErrors: ""
   })
+
+  const getCategories = (userId) => {
+    const apiUrl = `http://localhost:3000/api/v1/user/${userId}/category`;
+    axios.get(apiUrl, { withCredentials: true })
+      .then(response => {
+        dispatch(categoryAction.addCategory(response.data));
+        console.log(response.data)
+      })
+  }
 
   const handleSubmit = (e) => {
     const { email, password } = loginDetail;
@@ -29,8 +40,10 @@ const Login = () => {
       .then(response => {
         console.log(response.data)
         if (response.data.logged_in) {
-          dispatch(loginAction.login(response.data));        
+          dispatch(loginAction.login(response.data));     
           nav("/");
+          console.log(response.data.user.id)
+          getCategories(response.data.user.id)
         }
       })
       .catch(error => {

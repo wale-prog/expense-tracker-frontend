@@ -1,33 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { categoryAction } from '../../redux/CategorySlice';
-import axios from 'axios';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import './ExpensesFilter.css';
 
 const ExpensesFilter = (props) => {
 
-  const dispatch = useDispatch();
-
-  const currentUser = useSelector((state) => state.login[0]);
-  const user = currentUser.user
-  const userId = user.id
-  
-  const getCategories = () => {
-    const apiUrl = `http://localhost:3000/api/v1/user/${userId}/category`;
-    axios.get(apiUrl, { withCredentials: true })
-      .then(response => {
-        dispatch(categoryAction.addCategory(response.data));
-        console.log(response.data);
-      })
-  }
-
-  useEffect(() => {
-    getCategories();
-  }, [])
-
-
+  const currentUserCat = useSelector((state) => state.category[0]);
+   
   const handleSelect = (e) => {
     props.onYearChange(e.target.value)
   } 
@@ -41,8 +20,24 @@ const ExpensesFilter = (props) => {
   ]
 
   const [category, setCategory] = useState('')
+
   const handleCatSelect = (e) => {
     setCategory(e.target.value)
+  }
+
+  const catOptions = () => {
+    if (typeof currentUserCat !== 'undefined' && currentUserCat.length > 0) {
+      return (
+        currentUserCat.map(cat => (
+          <option
+            key={cat.id}
+            value={cat.name}
+            >
+              {cat.name}
+          </option>
+        ))
+      )
+    }
   }
 
 
@@ -66,10 +61,9 @@ const ExpensesFilter = (props) => {
         </div>
         <div className='expense-filter__category'>
           <label>Filter by Category</label>
-          <select value={category} onChange={handleCatSelect}>
+          <select value={category} onChange={handleCatSelect}>          
             <option className='category-filter' disabled={true} value="">Category</option>
-            <option value="Car">Car</option>
-            <option value="Home">Home</option>
+            {catOptions()}            
           </select>
         </div>
         
