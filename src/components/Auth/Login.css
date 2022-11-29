@@ -1,0 +1,10 @@
+.error {
+  color: #fff;
+  background-color: red;
+  width: 60%;
+  cursor: pointer;  
+}
+
+.hide {
+  visibility: hidden;
+}

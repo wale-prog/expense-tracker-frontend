@@ -4,6 +4,7 @@ import axios from "axios";
 import { loginAction } from "../../redux/LoginSlice"; 
 import { useDispatch } from "react-redux";
 import { categoryAction } from "../../redux/CategorySlice";
+import './Login.css'
 
 
 const Login = () => {
@@ -44,7 +45,11 @@ const Login = () => {
           nav("/");
           console.log(response.data.user.id)
           getCategories(response.data.user.id)
+        } else {
+          setLoginDetail({ ...loginDetail, loginErrors: response.data})
+
         }
+
       })
       .catch(error => {
         setLoginDetail({ ...loginDetail, loginErrors: error })
@@ -58,8 +63,22 @@ const Login = () => {
     ))
   }
 
+  const hideError = () => {
+    document.querySelector('.error').classList.add('hide')
+  }
+  const errorDisplay = () => {
+    if (loginDetail.loginErrors) {
+      return (
+        <div>
+          <p className="error" onClick={hideError}>{loginDetail.loginErrors.error}</p>
+        </div>
+      )    
+    }
+  }
+
   return (
     <div>
+      {errorDisplay()}
       <form onSubmit={handleSubmit}>
         <input
           type="email" 
