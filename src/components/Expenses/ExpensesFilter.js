@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import './ExpensesFilter.css';
 
 const ExpensesFilter = (props) => {
 
+  const currentUserCat = useSelector((state) => state.category[0]);
+   
   const handleSelect = (e) => {
     props.onYearChange(e.target.value)
   } 
@@ -15,6 +18,27 @@ const ExpensesFilter = (props) => {
     {value: '2020', text: '2020'},
     {value: '2019', text: '2019'},
   ]
+
+  const [category, setCategory] = useState('')
+
+  const handleCatSelect = (e) => {
+    setCategory(e.target.value)
+  }
+
+  const catOptions = () => {
+    if (typeof currentUserCat !== 'undefined' && currentUserCat.length > 0) {
+      return (
+        currentUserCat.map(cat => (
+          <option
+            key={cat.id}
+            value={cat.name}
+            >
+              {cat.name}
+          </option>
+        ))
+      )
+    }
+  }
 
 
   return (
@@ -37,10 +61,9 @@ const ExpensesFilter = (props) => {
         </div>
         <div className='expense-filter__category'>
           <label>Filter by Category</label>
-          <select value="">
+          <select value={category} onChange={handleCatSelect}>          
             <option className='category-filter' disabled={true} value="">Category</option>
-            <option value="Car">Car</option>
-            <option value="Home">Home</option>
+            {catOptions()}            
           </select>
         </div>
         

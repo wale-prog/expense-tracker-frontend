@@ -1,42 +1,41 @@
-import React, { useState } from 'react';
-import Expenses from "./components/Expenses/Expenses";
-import NewExpense from './components/NewExpense/NewExpense';
-
-const initialExpenses = [
-  {
-    id: "e1",
-    title: "Toilet Paper",
-    amount: 94.12,
-    date: new Date(2020, 7, 14),
-  },
-  { id: "e2", 
-    title: "New TV",
-    amount: 799.49, 
-    date: new Date(2021, 2, 12)
-  },
-  {
-    id: "e3",
-    title: "Car Insurance",
-    amount: 294.67,
-    date: new Date(2021, 2, 28),
-  },
-  {
-    id: "e4",
-    title: "New Desk (Wooden)",
-    amount: 450,
-    date: new Date(2021, 5, 12),
-  },
-  {
-    id: "e5",
-    title: "New Computer",
-    amount: 700,
-    date: new Date(2022, 4, 25 )
-  }
-]
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { loginAction } from './redux/LoginSlice';
+import axios from 'axios';
+import ExpensePage from './components/Expenses/ExpensePage';
+import Registration from './components/Auth/Registration';
+import Login from './components/Auth/Login';
+import { categoryAction } from './redux/CategorySlice';
 
 const App = () =>{
+  const [expenses, setExpenses] = useState([]);
+  const dispatch = useDispatch();
 
-  const [expenses, setExpenses] = useState(initialExpenses);
+  const getCategories = (userId) => {
+    const apiUrl = `http://localhost:3000/api/v1/user/${userId}/category`;
+    axios.get(apiUrl, { withCredentials: true })
+      .then(response => {
+        dispatch(categoryAction.addCategory(response.data));
+      })
+  }
+
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      axios.get("http://localhost:3000/logged_in", { withCredentials: true })
+      .then(response => {
+          if (response.data.logged_in) {
+            dispatch(loginAction.login(response.data));
+            console.log(response.data)
+            getCategories(response.data.user.id)        
+          } 
+        })
+      .catch(error => {
+        console.log("Check login error", error);
+      });
+    }
+    checkLoginStatus()
+  })
 
   const addExpenseHandler = (expense) => {
     setExpenses(prevExpenses => ([expense, ...prevExpenses])
@@ -44,9 +43,33 @@ const App = () =>{
   };
 
   return (
-    <div>
-      <NewExpense onAddExpense={addExpenseHandler} />
-      <Expenses items={expenses} />
+    <div>      
+      <BrowserRouter>
+        <Routes>
+          <Route exact path='registrations' element={<Registration />}/>
+          <Route exact path='login' element={<Login  />}/>
+          <Route
+            exact
+            path='/'
+            element={
+              <ExpensePage
+                 onAddExpense={addExpenseHandler}
+                 items={expenses}
+              />
+            } 
+          />
+          <Route
+          exact
+          path='/expense'
+          element={
+            <ExpensePage
+               onAddExpense={addExpenseHandler}
+               items={expenses}
+              />
+            } 
+            />               
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
