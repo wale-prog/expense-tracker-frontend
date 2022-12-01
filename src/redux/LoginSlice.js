@@ -1,4 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+export const logout = createAsyncThunk(
+  'User/logout',
+  async() => {
+    await axios.delete("http://localhost:3000/logout", { withCredentials: true })
+  }   
+)
 
 const initialState = [];
 const loginSlice = createSlice({
@@ -8,10 +16,12 @@ const loginSlice = createSlice({
     login: (state, action) => {
      return [...state, action.payload];
     },
-    logout: (state, action) => {
-      state.push(action.payload);
-    }
-  },  
+  },
+  extraReducers: (builder) => {
+    builder.addCase(logout.fulfilled, (state, action) => (
+      state = []
+    ))
+  } 
 })
 
 export default loginSlice.reducer;

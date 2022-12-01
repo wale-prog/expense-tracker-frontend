@@ -28,7 +28,7 @@ const App = () =>{
             dispatch(loginAction.login(response.data));
             console.log(response.data)
             getCategories(response.data.user.id)        
-          } 
+          }
         })
       .catch(error => {
         console.log("Check login error", error);
@@ -36,6 +36,7 @@ const App = () =>{
     }
     checkLoginStatus()
   })
+
 
   const addExpenseHandler = (expense) => {
     setExpenses(prevExpenses => ([expense, ...prevExpenses])

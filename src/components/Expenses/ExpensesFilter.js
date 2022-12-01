@@ -1,29 +1,26 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-
 import './ExpensesFilter.css';
 
 const ExpensesFilter = (props) => {
 
   const currentUserCat = useSelector((state) => state.category[0]);
-   
-  const handleSelect = (e) => {
+  const expenses = useSelector((state) => state.expense[0])  
+
+  const [filterSelect, setFilterSelect] = useState({
+    category: '',
+    year: ''
+  });  
+
+  const handleYearSelect = (e) => {
+    setFilterSelect({ ...filterSelect, [e.target.name]: e.target.value})
     props.onYearChange(e.target.value)
-  } 
-
-  const optionYear = [
-    {value: '', text: 'Year', className: 'year-filter__disabled', disabled: true},
-    {value: '2022', text: '2022'},
-    {value: '2021', text: '2021'},
-    {value: '2020', text: '2020'},
-    {value: '2019', text: '2019'},
-  ]
-
-  const [category, setCategory] = useState('')
+  }
 
   const handleCatSelect = (e) => {
-    setCategory(e.target.value)
+    setFilterSelect({ ...filterSelect, [e.target.name]: e.target.value})
   }
+
 
   const catOptions = () => {
     if (typeof currentUserCat !== 'undefined' && currentUserCat.length > 0) {
@@ -39,30 +36,47 @@ const ExpensesFilter = (props) => {
       )
     }
   }
+  const year = [];
+  const filterYear = () => {
 
+    for(let i = 0; i < expenses.length; i+=1){
+      let data = expenses[i].date.split("-")[0]
+      if(!year.includes(data)) {
+        year.push(data)
+      }
+    }
+    return year.sort();
+  }
+ 
+  const yearOptions = () => {
+    if (expenses) {
+      return(
+        filterYear().map(expense => (
+          <option
+            key={expense}
+            value={expense}
+          >
+            {expense}
+          </option>
+         ))
+      )
+    }
+  }
 
   return (
     <div className='expenses-filter'>
       <div className='expenses-filter__control'>
         <div className='expense-filter__year'>
           <label>Filter by year</label>
-          <select value={props.selected} onChange={handleSelect}>
-          {optionYear.map(year => (
-            <option
-              key={year.value}
-              value={year.value}
-              disabled={year.disabled}
-              className={year.className}
-            >
-              {year.text}
-            </option>
-           ))}
+          <select value={filterSelect.year} name='year' onChange={handleYearSelect}>
+            <option className='year-filter__disabled' disabled={true} value=""> Year </option>
+            {yearOptions()}
           </select>
         </div>
         <div className='expense-filter__category'>
           <label>Filter by Category</label>
-          <select value={category} onChange={handleCatSelect}>          
-            <option className='category-filter' disabled={true} value="">Category</option>
+          <select value={filterSelect.category} name='category' onChange={handleCatSelect}>          
+            <option className='category-filter' disabled={true} value=""> Category </option>
             {catOptions()}            
           </select>
         </div>

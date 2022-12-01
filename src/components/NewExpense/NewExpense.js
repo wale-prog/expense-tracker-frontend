@@ -1,19 +1,14 @@
 import React, { useState } from "react"
+import { useSelector } from "react-redux";
 import './NewExpense.css'
 import ExpenseForm from "./ExpenseForm";
 
-const NewExpense = (props) => {
+const NewExpense = () => {
+
+  const expense = useSelector(state => state.expense);
+  console.log(expense)
 
   const [hideForm, setHideForm] = useState(false)
-
-  const saveExpenseDataHandler = (data) => {
-    const expenseData = {
-      ...data,
-      id: Math.random().toString()
-    };
-    console.log(expenseData)
-    props.onAddExpense(expenseData)
-  }; 
 
   const handleHide = () => {
     setHideForm(!hideForm)
@@ -22,7 +17,7 @@ const NewExpense = (props) => {
   return(
     <div className="new-expense">
       {!hideForm && <button onClick={handleHide}>Add New Expense</button>}
-      {hideForm && <ExpenseForm onCancel={handleHide} onSaveExpenseData={saveExpenseDataHandler} />}
+      {hideForm && <ExpenseForm onCancel={handleHide} />}
     </div>
   )
 
