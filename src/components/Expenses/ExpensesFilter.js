@@ -19,6 +19,7 @@ const ExpensesFilter = (props) => {
 
   const handleCatSelect = (e) => {
     setFilterSelect({ ...filterSelect, [e.target.name]: e.target.value})
+    props.onCatChange(e.target.value)
   }
 
 
@@ -28,7 +29,7 @@ const ExpensesFilter = (props) => {
         currentUserCat.map(cat => (
           <option
             key={cat.id}
-            value={cat.name}
+            value={cat.id}
             >
               {cat.name}
           </option>

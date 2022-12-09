@@ -3,15 +3,17 @@ import './ExpenseForm.css';
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { expenseAction } from "../../redux/ExpenseSlice";
-// import { getExpenses } from "../../redux/ExpenseSlice";
+import { useSelector } from "react-redux";
 
 const ExpenseForm = (props) => {
   const dispatch = useDispatch();
+  const category = useSelector(state => state.category[0]);
 
   const [formInput, setFormInput] = useState({
     title: '',
     amount: '',
-    date: ''
+    date: '',
+    category: ''
   })
 
   const handleChange = (e) => {
@@ -21,13 +23,14 @@ const ExpenseForm = (props) => {
   }
 
   const postExpense = (input) => {
-    const { name, amount, date } = input;
+    const { name, amount, date, category } = input;
     axios.post("http://localhost:3000/api/v1/expense",
       {
         expense : {
           name,
           amount,
-          date
+          date,
+          category_id: category
         }
       },
       { withCredentials: true }
@@ -47,11 +50,12 @@ const ExpenseForm = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const{ title, amount, date } = formInput
+    const{ title, amount, date, category } = formInput
     const expenseData = {
       name: title,
       amount: Number(amount),
-      date: new Date(date)
+      date: new Date(date),
+      category
     };
     postExpense(expenseData);
     props.onCancel()   
@@ -60,7 +64,8 @@ const ExpenseForm = (props) => {
         ...prevState,
         title: '',
         amount: '',
-        date: ''
+        date: '',
+        category: ''
       }
     ))
   }
@@ -80,6 +85,19 @@ const ExpenseForm = (props) => {
           <div className="new-expense__control">
             <label>Date</label>
             <input name="date" type="date" onChange={handleChange} value={formInput.date} min="2019-01-01" max="2022-12-31" />
+          </div>
+          <div className="new-expense__control">
+            <label>Category</label>
+            <select
+              name="category"
+              onChange={handleChange}
+              value={formInput.category}
+              >
+              <option value="" disabled>Select a category</option>
+              {category.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
           </div>
         </div>
         <div className="new-expense__actions">

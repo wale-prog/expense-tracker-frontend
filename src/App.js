@@ -26,7 +26,6 @@ const App = () =>{
       .then(response => {
           if (response.data.logged_in) {
             dispatch(loginAction.login(response.data));
-            console.log(response.data)
             getCategories(response.data.user.id)        
           }
         })
@@ -36,7 +35,6 @@ const App = () =>{
     }
     checkLoginStatus()
   })
-
 
   const addExpenseHandler = (expense) => {
     setExpenses(prevExpenses => ([expense, ...prevExpenses])

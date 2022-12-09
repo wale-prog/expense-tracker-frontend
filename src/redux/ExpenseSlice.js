@@ -8,12 +8,12 @@ export const getExpenses = createAsyncThunk(
    async() => {
     const response = await axios.get(apiUrl, { withCredentials: true })
     const responseData = await response.data
-    console.log(responseData)
     const output = responseData.expenses.map(expense => ({
       id: expense.id,
       name: expense.name,
       amount: expense.amount,
-      date: expense.date        
+      date: expense.date,
+      category_id: expense.category_id      
     }));
     return output;
   }

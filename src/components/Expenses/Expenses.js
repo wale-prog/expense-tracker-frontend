@@ -7,26 +7,47 @@ import ExpensesList from './ExpensesList';
 import ExpenseChart from './ExpenseChart';
 
 const Expenses = () => {
-  const [selectedYear, setSelectedYear] = useState('2020')
-  console.log(selectedYear)
-
+  const [filterInput, setFilterInput] = useState({
+    year: '',
+    category: ''
+  })
   let expenses = useSelector((state) => state.expense[0])
-  console.log(expenses)
-  
+
   const handleYearChange = (changeYear) => {
-    setSelectedYear(changeYear)
+    setFilterInput(prevState => (
+      { ...prevState, year: changeYear}
+    ))
   }
-  expenses ? expenses = expenses.filter(expense => expense.date.split("-")[0] === selectedYear) : expenses = []
-  console.log(expenses)
-  
-  
+
+  const handleCatChange = (changeCat) => {
+    setFilterInput(prevState => (
+      { ...prevState, category: changeCat}
+    ))
+  }
+
+  console.log(filterInput)
+
+  const filteredExpenses = (input, year) => {
+    if (year === '' && filterInput.category === '') {
+      return []
+    } else if(year !== '' && filterInput.category === '') {
+      return input.filter(expense => expense.date.split("-")[0] === year)
+    } else if(year === '' && filterInput.category !== '') {
+      return input.filter(expense => expense.category_id === parseInt(filterInput.category))
+    } else if (year !== '' && filterInput.category !== '') {
+      return input.filter(expense => expense.date.split("-")[0] === year && expense.category_id === parseInt(filterInput.category))
+    }
+  }
+
+  console.log(filteredExpenses(expenses, filterInput.year))
+  // expenses ? expenses = expenses.filter(expense => expense.date.split("-")[0] === selectedYear) : expenses = []  
 
   return (
     <div>
       <Card className="expenses">        
-        <ExpensesFilter selected={selectedYear} onYearChange={handleYearChange}/> 
-        <ExpenseChart expenses={expenses} />
-        <ExpensesList items={expenses} />
+        <ExpensesFilter selected={filterInput.year} onYearChange={handleYearChange} onCatChange={handleCatChange}/> 
+        <ExpenseChart expenses={filteredExpenses(expenses, filterInput.year)} />
+        <ExpensesList items={filteredExpenses(expenses, filterInput.year)} />
       </Card>
     </div>
   );
