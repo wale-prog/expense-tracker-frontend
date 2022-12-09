@@ -8,6 +8,7 @@ export const getExpenses = createAsyncThunk(
    async() => {
     const response = await axios.get(apiUrl, { withCredentials: true })
     const responseData = await response.data
+    console.log(responseData)
     const output = responseData.expenses.map(expense => ({
       id: expense.id,
       name: expense.name,
@@ -25,7 +26,7 @@ const expenseSlice = createSlice({
   initialState,
   reducers: {
     addExpense: (state, action) => {
-      return ([...state, action.payload])
+      return ([...state[0], action.payload] )
     }
   },
   extraReducers: (builder) => {

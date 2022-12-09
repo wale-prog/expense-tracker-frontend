@@ -3,6 +3,7 @@ import './ExpenseForm.css';
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { expenseAction } from "../../redux/ExpenseSlice";
+// import { getExpenses } from "../../redux/ExpenseSlice";
 
 const ExpenseForm = (props) => {
   const dispatch = useDispatch();
@@ -33,7 +34,13 @@ const ExpenseForm = (props) => {
     ).then(response => {
       console.log(response.data)
       if (response.data.status === "created") {
-        dispatch(expenseAction.addExpense(response.data.expense))
+        const {id, name, amount, date} = response.data.expense;
+        dispatch(expenseAction.addExpense({
+          id,
+          name,
+          amount,
+          date
+        }))
       }
     })
   }
@@ -55,7 +62,7 @@ const ExpenseForm = (props) => {
         amount: '',
         date: ''
       }
-    ))  
+    ))
   }
 
   return (

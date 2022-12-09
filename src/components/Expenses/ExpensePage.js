@@ -18,12 +18,14 @@ const ExpensePage = (props) => {
 
   const handleSessions = (e) => {
     if (e.target.innerText === 'Logout') {
-      dispatch(logout())
+      dispatch(logout()).then(resp => {
+        if(resp.type === "User/logout/fulfilled"){
+          nav("/login");
+        }
+      })
+    } else if(e.target.innerText === 'Login') {
       nav("/login");
-      console.log(userInfo)
-    } else{
-      nav("/login");
-    } 
+    }
   }
 
   const status = () => {

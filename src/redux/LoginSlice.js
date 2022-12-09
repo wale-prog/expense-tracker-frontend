@@ -4,10 +4,18 @@ import axios from "axios";
 export const logout = createAsyncThunk(
   'User/logout',
   async() => {
-    await axios.delete("http://localhost:3000/logout", { withCredentials: true })
+    await axios.delete('http://localhost:3000/logout', { withCredentials: true })
   }   
 )
 
+// export const login = createAsyncThunk(
+//   'User/login',
+//   async(user) => {
+//     const response = await axios.post("http://localhost:3000/sessions", user, { withCredentials: true })
+//     const responseData = await response.data
+//     return responseData
+//   }
+// )
 const initialState = [];
 const loginSlice = createSlice({
   name: 'login',
@@ -21,6 +29,9 @@ const loginSlice = createSlice({
     builder.addCase(logout.fulfilled, (state, action) => (
       state = []
     ))
+    // builder.addCase(login.fulfilled, (state, action) => (
+    //   [...state, {login: action.payload}]
+    // ))
   } 
 })
 
