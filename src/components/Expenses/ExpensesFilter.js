@@ -70,14 +70,14 @@ const ExpensesFilter = (props) => {
         <div className='expense-filter__year'>
           <label>Filter by year</label>
           <select value={filterSelect.year} name='year' onChange={handleYearSelect}>
-            <option className='year-filter__disabled' disabled={true} value=""> Year </option>
+            <option className='year-filter__disabled' value=""> Year </option>
             {yearOptions()}
           </select>
         </div>
         <div className='expense-filter__category'>
           <label>Filter by Category</label>
           <select value={filterSelect.category} name='category' onChange={handleCatSelect}>          
-            <option className='category-filter' disabled={true} value=""> Category </option>
+            <option  value=""> Category </option>
             {catOptions()}            
           </select>
         </div>

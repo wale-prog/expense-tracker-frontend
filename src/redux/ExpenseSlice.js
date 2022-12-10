@@ -26,8 +26,9 @@ const expenseSlice = createSlice({
   initialState,
   reducers: {
     addExpense: (state, action) => {
-      return ([...state[0], action.payload] )
-    }
+      state = []
+      state.push(action.payload)
+    }  
   },
   extraReducers: (builder) => {
     builder.addCase(getExpenses.fulfilled, (state, action) => (

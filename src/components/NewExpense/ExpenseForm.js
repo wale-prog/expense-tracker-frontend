@@ -35,15 +35,9 @@ const ExpenseForm = (props) => {
       },
       { withCredentials: true }
     ).then(response => {
-      console.log(response.data)
+      console.log(response.data.expense)
       if (response.data.status === "created") {
-        const {id, name, amount, date} = response.data.expense;
-        dispatch(expenseAction.addExpense({
-          id,
-          name,
-          amount,
-          date
-        }))
+        dispatch(expenseAction.addExpense(response.data.expense))
       }
     })
   }
@@ -92,6 +86,7 @@ const ExpenseForm = (props) => {
               name="category"
               onChange={handleChange}
               value={formInput.category}
+              required
               >
               <option value="" disabled>Select a category</option>
               {category.map(cat => (

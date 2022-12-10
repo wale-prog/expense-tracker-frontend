@@ -28,8 +28,11 @@ const Expenses = () => {
   console.log(filterInput)
 
   const filteredExpenses = (input, year) => {
-    if (year === '' && filterInput.category === '') {
+    if(expenses === undefined) {
       return []
+    }
+    if (year === '' && filterInput.category === '') {
+      return input
     } else if(year !== '' && filterInput.category === '') {
       return input.filter(expense => expense.date.split("-")[0] === year)
     } else if(year === '' && filterInput.category !== '') {
@@ -39,7 +42,6 @@ const Expenses = () => {
     }
   }
 
-  console.log(filteredExpenses(expenses, filterInput.year))
   // expenses ? expenses = expenses.filter(expense => expense.date.split("-")[0] === selectedYear) : expenses = []  
 
   return (

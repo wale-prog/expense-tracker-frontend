@@ -9,7 +9,8 @@ import { getExpenses } from "../../redux/ExpenseSlice";
 const ExpensePage = (props) => {
   const nav = useNavigate();
   const dispatch = useDispatch();
-  const userInfo = useSelector((state) => state.login[0]); 
+  const userInfo = useSelector((state) => state.login[0]);
+ 
   
   useEffect(() => {
     dispatch(getExpenses())
