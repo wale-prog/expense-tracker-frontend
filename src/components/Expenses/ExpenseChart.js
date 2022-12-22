@@ -1,8 +1,11 @@
 import React from "react";
 import Chart from "../Chart/Chart";
+import { useSelector } from "react-redux";
 
-const ExpenseChart = (props) => {
+const ExpenseChart = () => {
 
+  const expenses = useSelector(state => state.expense[0])
+  console.log(expenses)
 
   const chartDataPoints = [
     { label: 'Jan', value: 0 },
@@ -18,8 +21,8 @@ const ExpenseChart = (props) => {
     { label: 'Nov', value: 0 },
     { label: 'Dec', value: 0 }
   ];
-  if(props.expenses) {
-    for (const expense of props.expenses) {       
+  if(expenses) {
+    for (const expense of expenses) {       
       const expenseMonth = (+expense.date.split("-")[1]) - 1;
       chartDataPoints[expenseMonth].value += expense.amount
     }

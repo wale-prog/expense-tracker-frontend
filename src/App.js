@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginAction } from './redux/LoginSlice';
 import axios from 'axios';
@@ -10,8 +10,8 @@ import { categoryAction } from './redux/CategorySlice';
 
 const App = () =>{
   const [expenses, setExpenses] = useState([]);
-  const dispatch = useDispatch();  
-  
+  const dispatch = useDispatch();
+
   const getCategories = (userId) => {
     const apiUrl = `http://localhost:3000/api/v1/user/${userId}/category`;
     axios.get(apiUrl, { withCredentials: true })
@@ -26,6 +26,7 @@ const App = () =>{
       .then(response => {
           if (response.data.logged_in) {
             dispatch(loginAction.login(response.data));
+            console.log(response.data)
             getCategories(response.data.user.id)        
           }
         })
@@ -43,6 +44,7 @@ const App = () =>{
 
   return (
     <div>      
+      <BrowserRouter>
         <Routes>
           <Route exact path='registrations' element={<Registration />}/>
           <Route exact path='login' element={<Login  />}/>
@@ -67,6 +69,7 @@ const App = () =>{
             } 
             />               
         </Routes>
+      </BrowserRouter>
     </div>
   );
 }

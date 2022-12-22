@@ -1,27 +1,34 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
+import { expenseAction } from '../../redux/ExpenseSlice';
 import './ExpensesFilter.css';
 
-const ExpensesFilter = (props) => {
+const ExpensesFilter = () => {
 
   const currentUserCat = useSelector((state) => state.category[0]);
-  const expenses = useSelector((state) => state.expense[0])  
+  const expenses = useSelector((state) => state.expense[0])
+  const dispatch = useDispatch();
 
   const [filterSelect, setFilterSelect] = useState({
     category: '',
     year: ''
-  });  
+  });
 
-  const handleYearSelect = (e) => {
-    setFilterSelect({ ...filterSelect, [e.target.name]: e.target.value})
-    props.onYearChange(e.target.value)
-  }
+  useEffect(() => {
+    axios.get("http://localhost:3000/api/v1/expense", { withCredentials: true })
+    .then(response => {
+      if (response.data.status === 200) {
+        dispatch(expenseAction.addExpense(response.data.expenses))
+      }
+    }
+    )
+  })
+   
 
   const handleCatSelect = (e) => {
     setFilterSelect({ ...filterSelect, [e.target.name]: e.target.value})
-    props.onCatChange(e.target.value)
   }
-
 
   const catOptions = () => {
     if (typeof currentUserCat !== 'undefined' && currentUserCat.length > 0) {
@@ -29,7 +36,7 @@ const ExpensesFilter = (props) => {
         currentUserCat.map(cat => (
           <option
             key={cat.id}
-            value={cat.id}
+            value={cat.name}
             >
               {cat.name}
           </option>
@@ -37,27 +44,16 @@ const ExpensesFilter = (props) => {
       )
     }
   }
-  const year = [];
-  const filterYear = () => {
 
-    for(let i = 0; i < expenses.length; i+=1){
-      let data = expenses[i].date.split("-")[0]
-      if(!year.includes(data)) {
-        year.push(data)
-      }
-    }
-    return year.sort();
-  }
- 
   const yearOptions = () => {
     if (expenses) {
       return(
-        filterYear().map(expense => (
+        expenses.map(expense => (
           <option
-            key={expense}
-            value={expense}
+            key={expense.id}
+            value={expense.name}
           >
-            {expense}
+            {expense.date.split("-")[0]}
           </option>
          ))
       )
@@ -69,15 +65,15 @@ const ExpensesFilter = (props) => {
       <div className='expenses-filter__control'>
         <div className='expense-filter__year'>
           <label>Filter by year</label>
-          <select value={filterSelect.year} name='year' onChange={handleYearSelect}>
-            <option className='year-filter__disabled' value=""> Year </option>
+          <select value={filterSelect.year} name='year' onChange={handleCatSelect}>
+            <option className='year-filter__disabled' disabled={true} value="Year"> Year </option>
             {yearOptions()}
           </select>
         </div>
         <div className='expense-filter__category'>
           <label>Filter by Category</label>
           <select value={filterSelect.category} name='category' onChange={handleCatSelect}>          
-            <option  value=""> Category </option>
+            <option className='category-filter' disabled={true} value=""> Category </option>
             {catOptions()}            
           </select>
         </div>
