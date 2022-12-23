@@ -4,10 +4,9 @@ import axios from 'axios';
 import { expenseAction } from '../../redux/ExpenseSlice';
 import './ExpensesFilter.css';
 
-const ExpensesFilter = () => {
-
+const ExpensesFilter = (props) => {
   const currentUserCat = useSelector((state) => state.category[0]);
-  const expenses = useSelector((state) => state.expense[0])
+  const [expenses, setExpenses] = useState([]) 
   const dispatch = useDispatch();
 
   const [filterSelect, setFilterSelect] = useState({
@@ -19,15 +18,26 @@ const ExpensesFilter = () => {
     axios.get("http://localhost:3000/api/v1/expense", { withCredentials: true })
     .then(response => {
       if (response.data.status === 200) {
+        setExpenses([...response.data.expenses])
         dispatch(expenseAction.addExpense(response.data.expenses))
       }
     }
     )
-  })
-   
+  }, [dispatch])
 
   const handleCatSelect = (e) => {
-    setFilterSelect({ ...filterSelect, [e.target.name]: e.target.value})
+    props.onFilterChange({...filterSelect, [e.target.name]: e.target.value })
+    setFilterSelect({ ...filterSelect, [e.target.name]: e.target.value})    
+  }
+
+  const uniqueYear = () => {
+    const array = []
+    if (expenses !== undefined) {
+      for (let i = 0; i < expenses.length; i++) {
+        if (!array.includes(expenses[i].date.split("-")[0])) array.push(expenses[i].date.split("-")[0])
+      }
+    }
+    return array;
   }
 
   const catOptions = () => {
@@ -36,7 +46,7 @@ const ExpensesFilter = () => {
         currentUserCat.map(cat => (
           <option
             key={cat.id}
-            value={cat.name}
+            value={cat.id}
             >
               {cat.name}
           </option>
@@ -48,32 +58,37 @@ const ExpensesFilter = () => {
   const yearOptions = () => {
     if (expenses) {
       return(
-        expenses.map(expense => (
+        uniqueYear().map((year, index) => (
           <option
-            key={expense.id}
-            value={expense.name}
+            key={index}
+            value={year}
           >
-            {expense.date.split("-")[0]}
+            {year}
           </option>
          ))
       )
     }
   }
 
+
   return (
     <div className='expenses-filter'>
       <div className='expenses-filter__control'>
         <div className='expense-filter__year'>
           <label>Filter by year</label>
-          <select value={filterSelect.year} name='year' onChange={handleCatSelect}>
-            <option className='year-filter__disabled' disabled={true} value="Year"> Year </option>
+          <select
+           value={filterSelect.year}
+           name='year' 
+           onChange={handleCatSelect}
+          >
+            <option className='year-filter__disabled' value=""> Year </option>
             {yearOptions()}
           </select>
         </div>
         <div className='expense-filter__category'>
           <label>Filter by Category</label>
           <select value={filterSelect.category} name='category' onChange={handleCatSelect}>          
-            <option className='category-filter' disabled={true} value=""> Category </option>
+            <option className='category-filter' value=""> Category </option>
             {catOptions()}            
           </select>
         </div>

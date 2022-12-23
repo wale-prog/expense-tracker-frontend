@@ -1,25 +1,46 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import './Expenses.css'
 import Card from "../UI/Card";
 import ExpensesFilter from './ExpensesFilter';
 import ExpensesList from './ExpensesList';
 import ExpenseChart from './ExpenseChart';
 
-const Expenses = (props)=> {
-  const [selectedYear, setSelectedYear] = useState('2020')
+const Expenses = ()=> {
+  const expenses = useSelector(state => state.expense[0])
+  const [selectedOption, setSelectedOption] = useState({
+    year: '',
+    category: ''
+  })
   
   const handleYearChange = (changeYear) => {
-    setSelectedYear(changeYear)
+    setSelectedOption(changeYear)
   }
-
-  const filteredExpenses = props.items.filter(expense => 
-    expense.date.getFullYear() === Number(selectedYear)
-  );  
+  
+  let filteredExpenses = [];
+  if(expenses !== undefined) {
+    if(selectedOption.year === '' && selectedOption.category === ''){
+       filteredExpenses = expenses;
+    } else if (selectedOption.year !== '' && selectedOption.category === ''){
+      filteredExpenses = expenses.filter(expense => {
+        return expense.date.split("-")[0] === selectedOption.year
+      });
+    
+    } else if(selectedOption.year === '' && selectedOption.category !== ''){
+      filteredExpenses = expenses.filter(expense => {
+        return expense.category_id === Number(selectedOption.category)
+      });
+    } else if (selectedOption.year !== '' && selectedOption.category !== ''){
+      filteredExpenses = expenses.filter(expense => {
+        return expense.date.split("-")[0] === selectedOption.year && expense.category_id === Number(selectedOption.category)
+      });
+    }
+  }
 
   return (
     <div>
       <Card className="expenses">        
-        <ExpensesFilter selected={selectedYear} onYearChange={handleYearChange}/> 
+        <ExpensesFilter selected={selectedOption} onFilterChange={handleYearChange}/> 
         <ExpenseChart expenses={filteredExpenses} />
         <ExpensesList items={filteredExpenses} />
       </Card>

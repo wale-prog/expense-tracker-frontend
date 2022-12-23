@@ -5,7 +5,7 @@ import NewExpense from "../NewExpense/NewExpense";
 import { useSelector, useDispatch } from "react-redux";
 import { loginAction } from "../../redux/LoginSlice";
 
-const ExpensePage = (props) => {
+const ExpensePage = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.login);
@@ -31,11 +31,10 @@ const ExpensePage = (props) => {
     } 
   }
 
-  // console.log(userInfo[0].logged_in);
   return (
   <>
     <NewExpense />
-    <Expenses items={props.items}/>
+    <Expenses />
     <h2>Status: {userInfo ? "LOGGED_IN" : "NOT LOGGED_IN"}</h2>    
     <button onClick={handleSessions}>{!userInfo ? "Login" : "Logout"}</button>
   </>

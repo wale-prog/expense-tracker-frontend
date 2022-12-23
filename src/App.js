@@ -10,6 +10,7 @@ import { categoryAction } from './redux/CategorySlice';
 
 const App = () =>{
   const [expenses, setExpenses] = useState([]);
+  console.log(expenses)
   const dispatch = useDispatch();
 
   const getCategories = (userId) => {
@@ -41,6 +42,8 @@ const App = () =>{
     setExpenses(prevExpenses => ([expense, ...prevExpenses])
     );
   };
+
+  
 
   return (
     <div>      
