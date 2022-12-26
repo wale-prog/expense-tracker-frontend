@@ -16,6 +16,14 @@ export const postLogin = createAsyncThunk(
   }
 )
 
+export const postLogout = createAsyncThunk(
+  "login/postLogout",
+  async () => {
+    const response = await axios.delete("http://localhost:3000/logout", { withCredentials: true });
+    return response.data;
+  }
+)
+
 const initialState = [];
 const loginSlice = createSlice({
   name: 'login',
@@ -32,6 +40,9 @@ const loginSlice = createSlice({
     builder.addCase(postLogin.fulfilled, (state, action) => {
       state.push(action.payload)
     })
+    // builder.addCase(postLogout.fulfilled, (state, action) => {
+
+    // })
   }
 })
 

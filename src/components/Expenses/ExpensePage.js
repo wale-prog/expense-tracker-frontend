@@ -1,19 +1,18 @@
 import { useNavigate } from "react-router-dom";
-import Expenses from "./Expenses";
-import axios from "axios";
+import Expenses from "./Expenses"; 
 import NewExpense from "../NewExpense/NewExpense";
-import { useSelector } from "react-redux";
-import Login from "../Auth/Login";
+import { useSelector, useDispatch } from "react-redux";
+import { postLogout } from "../../redux/LoginSlice";
 
 const ExpensePage = () => {
   const nav = useNavigate();
+  const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.login);
-  console.log(userInfo)
-
+  
   const handleSessions = (e) => {
     if (e.target.innerText === 'Logout') {
-      const apiUrl = "http://localhost:3000/logout";
-      axios.delete(apiUrl, { withCredentials: true })  
+      dispatch(postLogout())
+      localStorage.removeItem("login");
       nav("/login");     
     } else{
       nav("/login");
@@ -21,15 +20,11 @@ const ExpensePage = () => {
   }
 
   return (
-  <>
-    {userInfo.length > 0 && userInfo[0].logged_in ?
-    <>
-      <NewExpense />
-      <Expenses />
-      <h2>Status: {userInfo ? "LOGGED_IN" : "NOT LOGGED_IN"}</h2>    
-      <button onClick={handleSessions}>{!userInfo ? "Login" : "Logout"}</button>
-    </> : <Login />
-  }
+  <>   
+    <NewExpense />
+    <Expenses />
+    <h2>Status: {userInfo ? "LOGGED_IN" : "NOT LOGGED_IN"}</h2>    
+    <button onClick={handleSessions}>{!userInfo ? "Login" : "Logout"}</button>  
   </>
   )
 };

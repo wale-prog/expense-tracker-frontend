@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postLogin } from "../../redux/LoginSlice"; 
 import { useDispatch, useSelector } from "react-redux";
+import { fetchCategory } from "../../redux/CategorySlice";
 import './Login.css'
 
 
@@ -10,8 +11,7 @@ const Login = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const login = useSelector((state) => state.login[0]);
-  console.log(login)
-
+  const [checkLogin, setCheckLogin] = useState();
   const [loginDetail, setLoginDetail] = useState({
     email: "",
     password: "",
@@ -25,16 +25,20 @@ const Login = () => {
       email,
       password,
     }
-    dispatch(postLogin(user))
-    if(login !== undefined && login.logged_in) {
-      nav("/expense");
-    }else if (login !== undefined && !login.logged_in) {
-      nav("/login")
-      setLoginDetail({ ...loginDetail, loginErrors: login.error})
-    }
+    dispatch(postLogin(user)).then(resp => {
+      if (resp.payload.logged_in) {
+        setCheckLogin(true)
+        localStorage.setItem("login", JSON.stringify(true))
+        dispatch(fetchCategory(resp.payload.user.id))
+        nav("/")
+      } else {
+        nav("/login")
+        setLoginDetail({ ...loginDetail, loginErrors: resp.payload.error})
+      }
+    })
     setLoginDetail({ ...loginDetail, email: "", password: ""})
-    console.log(loginDetail.loginErrors)
-  }
+  };
+  console.log(checkLogin)
 
   const handleChange = (e) => {
     setLoginDetail(prevState =>(

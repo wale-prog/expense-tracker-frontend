@@ -3,7 +3,6 @@ import logger from "redux-logger";
 import categoryReducer from "./CategorySlice";
 import loginReducer from "./LoginSlice";
 import expenseReducer from "./ExpenseSlice";
-// import logger from "redux-logger";
 
 
 const combinedReducer = combineReducers({
@@ -13,7 +12,7 @@ const combinedReducer = combineReducers({
 });
 
 const rootReducer = (state, action) => {
-  if (action.type === "login/logout") {
+  if (action.type === "login/postLogout/fulfilled") {
     state = undefined;
   }
   return combinedReducer(state, action);

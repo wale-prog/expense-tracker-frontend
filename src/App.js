@@ -7,6 +7,7 @@ import ExpensePage from './components/Expenses/ExpensePage';
 import Registration from './components/Auth/Registration';
 import Login from './components/Auth/Login';
 import { fetchCategory } from './redux/CategorySlice';
+import PrivateRoute from './components/PrivateRoute/index';
 
 const App = () =>{
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ const App = () =>{
       .then(response => {
           if (response.data.logged_in) {
             dispatch(loginAction.login(response.data));
-            dispatch(fetchCategory(response.data.user.id))        
+            dispatch(fetchCategory(response.data.user.id))       
           }
         })
       .catch(error => {
@@ -25,11 +26,7 @@ const App = () =>{
       });
     }
     checkLoginStatus()
-  })
-
-
-
-
+  });
 
   return (
     <div>      
@@ -37,20 +34,16 @@ const App = () =>{
         <Routes>
           <Route exact path='registrations' element={<Registration />}/>
           <Route exact path='login' element={<Login  />}/>
-          <Route
-            exact
-            path='/'
-            element={
-              <ExpensePage />
-            }
-          />
-          <Route
-          exact
-          path='/expense'
-          element={
+          <Route exact path='/' element={ 
+          <PrivateRoute>
             <ExpensePage />
-            } 
-            />               
+          </PrivateRoute>
+          }/>
+          <Route exact path='/expense' element={ 
+          <PrivateRoute>
+            <ExpensePage />
+          </PrivateRoute>
+          }/>             
         </Routes>
       </BrowserRouter>
     </div>
