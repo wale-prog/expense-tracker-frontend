@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { postLogin } from "../../redux/LoginSlice"; 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategory } from "../../redux/CategorySlice";
-import './Login.css'
+import './Login.css';
+import { BsFillUnlockFill } from "react-icons/bs";
+
 
 
 const Login = () => {
@@ -59,10 +61,26 @@ const Login = () => {
     }
   }
 
+  const btnStyle = () => (
+    { 
+      color: "#78e19ecc",
+      fontSize: "24px",
+      // textAlign: "center",
+      zIndex: "-2",
+      // position: "relative",
+      // right: "30px",
+      padding: "0px",
+      margin: "0px",
+    }
+  )
+  
+
   return (
-    <div>
+    <div className="login-main">
+      <div className="bg-image" />
       {errorDisplay()}
-      <form onSubmit={handleSubmit}>
+      <h3 className="page-title"><em>Expense Tracker</em></h3>
+      <form className="login-form" onSubmit={handleSubmit}>
         <input
           type="email" 
           name="email" 
@@ -70,6 +88,7 @@ const Login = () => {
           value={loginDetail.email}
           onChange={handleChange}
           required
+          autoFocus
         />
         <input
           type="password" 
@@ -78,8 +97,8 @@ const Login = () => {
           value={loginDetail.password}
           onChange={handleChange}
           required
-        />
-        <button type="submit">Login</button>
+        />        
+        <button type="submit"> <BsFillUnlockFill style={btnStyle()} /> </button>
       </form>
     </div>
   )
