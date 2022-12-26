@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
-import { expenseAction } from '../../redux/ExpenseSlice';
+import { fetchExpense } from '../../redux/ExpenseSlice';
 import './ExpensesFilter.css';
 
 const ExpensesFilter = (props) => {
   const currentUserCat = useSelector((state) => state.category[0]);
-  const [expenses, setExpenses] = useState([]) 
+  const expenses = useSelector((state) => state.expense[0]);
   const dispatch = useDispatch();
 
   const [filterSelect, setFilterSelect] = useState({
@@ -15,14 +14,7 @@ const ExpensesFilter = (props) => {
   });
 
   useEffect(() => {
-    axios.get("http://localhost:3000/api/v1/expense", { withCredentials: true })
-    .then(response => {
-      if (response.data.status === 200) {
-        setExpenses([...response.data.expenses])
-        dispatch(expenseAction.addExpense(response.data.expenses))
-      }
-    }
-    )
+    dispatch(fetchExpense())
   }, [dispatch])
 
   const handleCatSelect = (e) => {
@@ -55,20 +47,16 @@ const ExpensesFilter = (props) => {
     }
   }
 
-  const yearOptions = () => {
-    if (expenses) {
-      return(
-        uniqueYear().map((year, index) => (
-          <option
-            key={index}
-            value={year}
-          >
-            {year}
-          </option>
-         ))
-      )
-    }
-  }
+  const yearOptions = () => (
+    uniqueYear().map((year, index) => (
+      <option
+        key={index}
+        value={year}
+      >
+        {year}
+      </option>
+    ))
+  )
 
 
   return (

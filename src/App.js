@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginAction } from './redux/LoginSlice';
@@ -6,20 +6,10 @@ import axios from 'axios';
 import ExpensePage from './components/Expenses/ExpensePage';
 import Registration from './components/Auth/Registration';
 import Login from './components/Auth/Login';
-import { categoryAction } from './redux/CategorySlice';
+import { fetchCategory } from './redux/CategorySlice';
 
 const App = () =>{
-  const [expenses, setExpenses] = useState([]);
-  console.log(expenses)
   const dispatch = useDispatch();
-
-  const getCategories = (userId) => {
-    const apiUrl = `http://localhost:3000/api/v1/user/${userId}/category`;
-    axios.get(apiUrl, { withCredentials: true })
-      .then(response => {
-        dispatch(categoryAction.addCategory(response.data));
-      })
-  }
 
   useEffect(() => {
     const checkLoginStatus = () => {
@@ -27,8 +17,7 @@ const App = () =>{
       .then(response => {
           if (response.data.logged_in) {
             dispatch(loginAction.login(response.data));
-            console.log(response.data)
-            getCategories(response.data.user.id)        
+            dispatch(fetchCategory(response.data.user.id))        
           }
         })
       .catch(error => {
@@ -38,12 +27,9 @@ const App = () =>{
     checkLoginStatus()
   })
 
-  const addExpenseHandler = (expense) => {
-    setExpenses(prevExpenses => ([expense, ...prevExpenses])
-    );
-  };
 
-  
+
+
 
   return (
     <div>      
@@ -55,20 +41,14 @@ const App = () =>{
             exact
             path='/'
             element={
-              <ExpensePage
-                 onAddExpense={addExpenseHandler}
-                 items={expenses}
-              />
-            } 
+              <ExpensePage />
+            }
           />
           <Route
           exact
           path='/expense'
           element={
-            <ExpensePage
-               onAddExpense={addExpenseHandler}
-               items={expenses}
-              />
+            <ExpensePage />
             } 
             />               
         </Routes>

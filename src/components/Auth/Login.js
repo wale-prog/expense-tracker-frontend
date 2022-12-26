@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { loginAction } from "../../redux/LoginSlice"; 
-import { useDispatch } from "react-redux";
-import { categoryAction } from "../../redux/CategorySlice";
+import { postLogin } from "../../redux/LoginSlice"; 
+import { useDispatch, useSelector } from "react-redux";
 import './Login.css'
 
 
@@ -11,6 +9,8 @@ const Login = () => {
 
   const nav = useNavigate();
   const dispatch = useDispatch();
+  const login = useSelector((state) => state.login[0]);
+  console.log(login)
 
   const [loginDetail, setLoginDetail] = useState({
     email: "",
@@ -18,43 +18,22 @@ const Login = () => {
     loginErrors: ""
   })
 
-  const getCategories = (userId) => {
-    const apiUrl = `http://localhost:3000/api/v1/user/${userId}/category`;
-    axios.get(apiUrl, { withCredentials: true })
-      .then(response => {
-        dispatch(categoryAction.addCategory(response.data));
-        console.log(response.data)
-      })
-  }
-
   const handleSubmit = (e) => {
-    const { email, password } = loginDetail;
-    axios.post("http://localhost:3000/sessions",
-      {
-        user: {
-          email,
-          password
-        },
-      }, 
-        { withCredentials: true }
-    )
-      .then(response => {
-        console.log(response.data)
-        if (response.data.logged_in) {
-          dispatch(loginAction.login(response.data));     
-          nav("/");
-          console.log(response.data.user.id)
-          getCategories(response.data.user.id)
-        } else {
-          setLoginDetail({ ...loginDetail, loginErrors: response.data})
-
-        }
-
-      })
-      .catch(error => {
-        setLoginDetail({ ...loginDetail, loginErrors: error })
-      }) 
     e.preventDefault();
+    const { email, password } = loginDetail;
+    const user = {
+      email,
+      password,
+    }
+    dispatch(postLogin(user))
+    if(login !== undefined && login.logged_in) {
+      nav("/expense");
+    }else if (login !== undefined && !login.logged_in) {
+      nav("/login")
+      setLoginDetail({ ...loginDetail, loginErrors: login.error})
+    }
+    setLoginDetail({ ...loginDetail, email: "", password: ""})
+    console.log(loginDetail.loginErrors)
   }
 
   const handleChange = (e) => {
@@ -67,10 +46,10 @@ const Login = () => {
     document.querySelector('.error').classList.add('hide')
   }
   const errorDisplay = () => {
-    if (loginDetail.loginErrors) {
+    if (login !== undefined) {
       return (
         <div>
-          <p className="error" onClick={hideError}>{loginDetail.loginErrors.error}</p>
+          <p className="error" onClick={hideError}>{login.error}</p>
         </div>
       )    
     }

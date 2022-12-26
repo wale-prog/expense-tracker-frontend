@@ -15,7 +15,7 @@ const Expenses = ()=> {
   
   const handleYearChange = (changeYear) => {
     setSelectedOption(changeYear)
-  }
+  };
   
   let filteredExpenses = [];
   if(expenses !== undefined) {
