@@ -3,8 +3,6 @@ import Chart from "../Chart/Chart";
 
 const ExpenseChart = (props) => {
 
-  console.log(props.expenses)
-
   const chartDataPoints = [
     { label: 'Jan', value: 0 },
     { label: 'Feb', value: 0 },
